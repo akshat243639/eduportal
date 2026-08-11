@@ -57,6 +57,10 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAuth }) => {
               <span className="bg-blue-50 text-blue-700 text-xs font-bold px-2 py-0.5 rounded-full border border-blue-200 hidden sm:inline-block">
                 Tuition Suite
               </span>
+              <span className="bg-emerald-50 text-emerald-700 text-[11px] font-bold px-2 py-0.5 rounded-full border border-emerald-200 hidden md:inline-flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>Firebase Cloud Live</span>
+              </span>
             </div>
             <p className="text-xs text-slate-500 hidden sm:block">
               Attendance • Fees • Homework • Progress Tracker

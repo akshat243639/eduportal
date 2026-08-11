@@ -23,6 +23,8 @@ export interface BatchSlot {
   join_code: string;
   schedule: string; // e.g. "Mon, Wed • 4:00 PM - 5:30 PM"
   room_or_link?: string;
+  meet_space_url?: string;
+  meet_space_id?: string;
   fee_amount: number;
   fee_frequency: 'monthly' | 'per_session';
   created_at: string;

@@ -22,7 +22,8 @@ import {
   QrCode,
   Send,
   X,
-  CheckCircle2
+  CheckCircle2,
+  Video
 } from 'lucide-react';
 import { BatchSlot } from '../../types';
 import { StudentDetailModal } from './StudentDetailModal';
@@ -38,12 +39,15 @@ export const TutorDashboard: React.FC = () => {
     homework,
     doubts,
     createBatch,
+    createGoogleMeetForBatch,
     addAnnouncement,
     addHomework,
     answerDoubt,
     updateTutorUpiSettings,
     addToast
   } = useApp();
+
+  const [isMeetCreating, setIsMeetCreating] = useState(false);
 
   // Selected Batch Slot to view details
   const [selectedBatchId, setSelectedBatchId] = useState<string | null>(() => {
@@ -414,7 +418,34 @@ export const TutorDashboard: React.FC = () => {
                   </h2>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
+                  {/* Google Meet Button */}
+                  {activeBatch.meet_space_url ? (
+                    <a
+                      href={activeBatch.meet_space_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs sm:text-sm rounded-2xl transition-all shadow-md flex items-center gap-2 animate-pulse"
+                    >
+                      <Video className="w-4 h-4" />
+                      <span>Launch Google Meet</span>
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
+                  ) : (
+                    <button
+                      onClick={async () => {
+                        setIsMeetCreating(true);
+                        await createGoogleMeetForBatch(activeBatch.id);
+                        setIsMeetCreating(false);
+                      }}
+                      disabled={isMeetCreating}
+                      className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-xs sm:text-sm rounded-2xl transition-all shadow-md flex items-center gap-2"
+                    >
+                      <Video className="w-4 h-4 text-indigo-200" />
+                      <span>{isMeetCreating ? 'Generating Space...' : 'Create Google Meet'}</span>
+                    </button>
+                  )}
+
                   <div className="bg-blue-50 border border-blue-200 p-2 px-3 rounded-2xl text-center">
                     <p className="text-[10px] font-bold text-blue-600 uppercase">
                       Unique Join Code

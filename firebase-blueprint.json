@@ -1,0 +1,173 @@
+{
+  "entities": {
+    "Profile": {
+      "title": "UserProfile",
+      "description": "User profile for tutor, student, or parent",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique user ID" },
+        "role": { "type": "string", "enum": ["tutor", "student", "parent"] },
+        "full_name": { "type": "string", "maxLength": 100 },
+        "email": { "type": "string", "maxLength": 100 },
+        "phone": { "type": "string", "maxLength": 20 },
+        "subject": { "type": "string", "maxLength": 100 },
+        "experience": { "type": "string", "maxLength": 50 },
+        "bio": { "type": "string", "maxLength": 500 },
+        "student_class": { "type": "string", "maxLength": 50 },
+        "parent_phone": { "type": "string", "maxLength": 20 },
+        "school_name": { "type": "string", "maxLength": 100 },
+        "student_ids": { "type": "array" },
+        "upi_id": { "type": "string", "maxLength": 100 },
+        "upi_qr_url": { "type": "string", "maxLength": 200000 },
+        "created_at": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["id", "role", "full_name", "email"]
+    },
+    "BatchSlot": {
+      "title": "BatchSlot",
+      "description": "Tuition batch slot created by tutor",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "tutor_id": { "type": "string" },
+        "tutor_name": { "type": "string" },
+        "batch_name": { "type": "string" },
+        "subject": { "type": "string" },
+        "class_name": { "type": "string" },
+        "time_slot": { "type": "string" },
+        "days": { "type": "array" },
+        "fee_amount": { "type": "number" },
+        "room_link": { "type": "string" },
+        "meet_space_url": { "type": "string" },
+        "meet_space_id": { "type": "string" },
+        "created_at": { "type": "string" }
+      },
+      "required": ["id", "tutor_id", "batch_name", "subject", "time_slot"]
+    },
+    "Enrollment": {
+      "title": "Enrollment",
+      "description": "Student enrollment in a batch",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "batch_id": { "type": "string" },
+        "student_id": { "type": "string" },
+        "student_name": { "type": "string" },
+        "parent_id": { "type": "string" },
+        "enrolled_at": { "type": "string" }
+      },
+      "required": ["id", "batch_id", "student_id"]
+    },
+    "AttendanceRecord": {
+      "title": "AttendanceRecord",
+      "description": "Daily attendance mark",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "batch_id": { "type": "string" },
+        "student_id": { "type": "string" },
+        "date": { "type": "string" },
+        "status": { "type": "string", "enum": ["Present", "Absent", "Late"] },
+        "notes": { "type": "string" }
+      },
+      "required": ["id", "batch_id", "student_id", "date", "status"]
+    },
+    "FeeRecord": {
+      "title": "FeeRecord",
+      "description": "Tuition ledger payment record",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "student_id": { "type": "string" },
+        "batch_id": { "type": "string" },
+        "batch_name": { "type": "string" },
+        "month": { "type": "string" },
+        "amount": { "type": "number" },
+        "status": { "type": "string", "enum": ["Paid", "Pending", "Overdue"] },
+        "due_date": { "type": "string" },
+        "paid_at": { "type": "string" },
+        "transaction_ref": { "type": "string" }
+      },
+      "required": ["id", "student_id", "amount", "status"]
+    },
+    "HomeworkItem": {
+      "title": "HomeworkItem",
+      "description": "Homework assignment",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "batch_id": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "due_date": { "type": "string" },
+        "attachment_url": { "type": "string" },
+        "attachment_name": { "type": "string" },
+        "attachment_type": { "type": "string" },
+        "created_at": { "type": "string" }
+      },
+      "required": ["id", "batch_id", "title", "due_date"]
+    },
+    "AnnouncementItem": {
+      "title": "AnnouncementItem",
+      "description": "Batch notice or announcement",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "batch_id": { "type": "string" },
+        "title": { "type": "string" },
+        "content": { "type": "string" },
+        "is_urgent": { "type": "boolean" },
+        "attachment_url": { "type": "string" },
+        "attachment_name": { "type": "string" },
+        "attachment_type": { "type": "string" },
+        "created_at": { "type": "string" }
+      },
+      "required": ["id", "batch_id", "title", "content"]
+    },
+    "ProgressReport": {
+      "title": "ProgressReport",
+      "description": "Student marks and progress",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "student_id": { "type": "string" },
+        "batch_id": { "type": "string" },
+        "subject": { "type": "string" },
+        "grade": { "type": "string" },
+        "marks_obtained": { "type": "number" },
+        "total_marks": { "type": "number" },
+        "remarks": { "type": "string" },
+        "date": { "type": "string" }
+      },
+      "required": ["id", "student_id", "subject", "grade"]
+    },
+    "DoubtRecord": {
+      "title": "DoubtRecord",
+      "description": "Student conceptual question or doubt",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "batch_id": { "type": "string" },
+        "student_id": { "type": "string" },
+        "question": { "type": "string" },
+        "image_url": { "type": "string" },
+        "status": { "type": "string", "enum": ["Pending", "Answered"] },
+        "answer": { "type": "string" },
+        "answered_at": { "type": "string" },
+        "created_at": { "type": "string" }
+      },
+      "required": ["id", "batch_id", "student_id", "question", "status"]
+    }
+  },
+  "firestore": {
+    "/profiles/{profileId}": { "schema": "Profile", "description": "User profiles" },
+    "/batches/{batchId}": { "schema": "BatchSlot", "description": "Tuition batch slots" },
+    "/enrollments/{enrollmentId}": { "schema": "Enrollment", "description": "Batch enrollments" },
+    "/attendance/{attendanceId}": { "schema": "AttendanceRecord", "description": "Student attendance logs" },
+    "/feeRecords/{feeId}": { "schema": "FeeRecord", "description": "Tuition fees" },
+    "/homework/{homeworkId}": { "schema": "HomeworkItem", "description": "Homework assignments" },
+    "/announcements/{announcementId}": { "schema": "AnnouncementItem", "description": "Class announcements" },
+    "/progress/{progressId}": { "schema": "ProgressReport", "description": "Student progress reports" },
+    "/doubts/{doubtId}": { "schema": "DoubtRecord", "description": "Student doubts and solutions" }
+  }
+}

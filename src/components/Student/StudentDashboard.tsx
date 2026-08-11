@@ -21,7 +21,9 @@ import {
   MessageSquare,
   Send,
   X,
-  QrCode
+  QrCode,
+  Video,
+  ExternalLink
 } from 'lucide-react';
 import { AttachmentViewer } from '../Common/AttachmentViewer';
 import { UpiPaymentModal } from './UpiPaymentModal';
@@ -293,6 +295,19 @@ export const StudentDashboard: React.FC = () => {
                 <p className="text-[11px] text-slate-500 mt-0.5">
                   Tutor: <strong>{b.tutor_name}</strong>
                 </p>
+
+                {b.meet_space_url && (
+                  <a
+                    href={b.meet_space_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-3 py-2 px-3 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-xl transition-all shadow-xs flex items-center justify-center gap-1.5 animate-pulse"
+                  >
+                    <Video className="w-3.5 h-3.5" />
+                    <span>Join Google Meet Class</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                )}
               </div>
             ))}
           </div>
