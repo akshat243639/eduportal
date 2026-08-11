@@ -1,0 +1,6 @@
+{
+  "name": "EduPortal - Tuition Management System",
+  "description": "Comprehensive tuition management portal for Tutors, Students, and Parents with attendance, fees, homework, announcements, and progress tracking.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
