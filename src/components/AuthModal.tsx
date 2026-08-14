@@ -10,7 +10,7 @@ interface AuthModalProps {
 }
 
 export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
-  const { registerUser, allProfiles, setCurrentUser, addToast } = useApp();
+  const { registerUser, loginWithEmail, allProfiles, setCurrentUser, addToast } = useApp();
 
   const [isRegistering, setIsRegistering] = useState(false);
   const [email, setEmail] = useState('');
@@ -40,6 +40,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
       if (code === 'auth/unauthorized-domain') {
         addToast(
           'Firebase Domain Error: Please add "akshat243639.github.io" under Firebase Console -> Authentication -> Settings -> Authorized Domains.',
+          'error'
+        );
+      } else if (code === 'auth/api-key-not-valid') {
+        addToast(
+          'Firebase API Key Error: Please go to Firebase Console (console.firebase.google.com) -> Build -> Authentication -> Click "Get Started" to activate Auth for project "eduportal-d8613".',
           'error'
         );
       } else if (code === 'auth/popup-closed-by-user') {
@@ -78,15 +83,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
       }
     } else {
       // Login flow
-      const existing = allProfiles.find(p => p.email.toLowerCase() === email.toLowerCase());
-      if (existing) {
-        setCurrentUser(existing);
-        addToast(`Welcome back, ${existing.full_name}!`, 'success');
-        onClose();
-      } else {
-        addToast(`No account found for "${email}". Please register below.`, 'error');
-        setIsRegistering(true);
-      }
+      loginWithEmail(email).then(user => {
+        if (user) {
+          onClose();
+        } else {
+          addToast(`No account found for "${email}". Please register below.`, 'error');
+          setIsRegistering(true);
+        }
+      });
     }
   };
 

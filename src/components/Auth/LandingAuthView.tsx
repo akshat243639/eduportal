@@ -21,7 +21,7 @@ import { UserRole } from '../../types';
 import { signInWithGoogle } from '../../firebase';
 
 export const LandingAuthView: React.FC = () => {
-  const { registerUser, allProfiles, setCurrentUser, addToast } = useApp();
+  const { registerUser, loginWithEmail, allProfiles, setCurrentUser, addToast } = useApp();
 
   const [mode, setMode] = useState<'login' | 'register'>('login');
   const [email, setEmail] = useState('');
@@ -49,6 +49,11 @@ export const LandingAuthView: React.FC = () => {
       if (code === 'auth/unauthorized-domain') {
         addToast(
           'Firebase Domain Error: Please add "akshat243639.github.io" under Firebase Console -> Authentication -> Settings -> Authorized Domains.',
+          'error'
+        );
+      } else if (code === 'auth/api-key-not-valid') {
+        addToast(
+          'Firebase API Key Error: Please go to Firebase Console (console.firebase.google.com) -> Build -> Authentication -> Click "Get Started" to activate Auth for project "eduportal-d8613".',
           'error'
         );
       } else if (code === 'auth/popup-closed-by-user') {
@@ -87,14 +92,12 @@ export const LandingAuthView: React.FC = () => {
       }
     } else {
       // Login flow
-      const existing = allProfiles.find(p => p.email.toLowerCase() === email.toLowerCase());
-      if (existing) {
-        setCurrentUser(existing);
-        addToast(`Welcome back, ${existing.full_name}!`, 'success');
-      } else {
-        addToast(`No account found for "${email}". Creating new account form below.`, 'info');
-        setMode('register');
-      }
+      loginWithEmail(email).then(user => {
+        if (!user) {
+          addToast(`No account found for "${email}". Creating new account form below.`, 'info');
+          setMode('register');
+        }
+      });
     }
   };
 

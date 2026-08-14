@@ -72,6 +72,7 @@ interface AppContextType {
   linkChild: (parentId: string, studentEmail: string) => Promise<{ success: boolean; message: string }>;
   addToast: (message: string, type?: ToastMessage['type']) => void;
   removeToast: (id: string) => void;
+  loginWithEmail: (email: string) => Promise<UserProfile | null>;
   resetToDemoData: () => Promise<void>;
 }
 
@@ -141,7 +142,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const list = snapshot.docs.map(d => d.data() as UserProfile);
         setProfiles(list);
       }
-    }, err => handleFirestoreError(err, OperationType.LIST, 'profiles'));
+    }, err => console.warn('Profiles snapshot listener:', err));
 
     // Listen to Batches
     const unsubBatches = onSnapshot(collection(db, 'batches'), snapshot => {
@@ -149,7 +150,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const list = snapshot.docs.map(d => d.data() as BatchSlot);
         setBatches(list);
       }
-    }, err => handleFirestoreError(err, OperationType.LIST, 'batches'));
+    }, err => console.warn('Batches snapshot listener:', err));
 
     // Listen to Enrollments
     const unsubEnrollments = onSnapshot(collection(db, 'enrollments'), snapshot => {
@@ -157,7 +158,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const list = snapshot.docs.map(d => d.data() as Enrollment);
         setEnrollments(list);
       }
-    }, err => handleFirestoreError(err, OperationType.LIST, 'enrollments'));
+    }, err => console.warn('Enrollments snapshot listener:', err));
 
     // Listen to Attendance
     const unsubAttendance = onSnapshot(collection(db, 'attendance'), snapshot => {
@@ -165,7 +166,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const list = snapshot.docs.map(d => d.data() as AttendanceRecord);
         setAttendance(list);
       }
-    }, err => handleFirestoreError(err, OperationType.LIST, 'attendance'));
+    }, err => console.warn('Attendance snapshot listener:', err));
 
     // Listen to Fees
     const unsubFees = onSnapshot(collection(db, 'feeRecords'), snapshot => {
@@ -173,7 +174,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const list = snapshot.docs.map(d => d.data() as FeeRecord);
         setFees(list);
       }
-    }, err => handleFirestoreError(err, OperationType.LIST, 'feeRecords'));
+    }, err => console.warn('Fees snapshot listener:', err));
 
     // Listen to Homework
     const unsubHomework = onSnapshot(collection(db, 'homework'), snapshot => {
@@ -181,7 +182,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const list = snapshot.docs.map(d => d.data() as Homework);
         setHomework(list);
       }
-    }, err => handleFirestoreError(err, OperationType.LIST, 'homework'));
+    }, err => console.warn('Homework snapshot listener:', err));
 
     // Listen to Announcements
     const unsubAnnouncements = onSnapshot(collection(db, 'announcements'), snapshot => {
@@ -189,7 +190,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const list = snapshot.docs.map(d => d.data() as Announcement);
         setAnnouncements(list);
       }
-    }, err => handleFirestoreError(err, OperationType.LIST, 'announcements'));
+    }, err => console.warn('Announcements snapshot listener:', err));
 
     // Listen to Progress
     const unsubProgress = onSnapshot(collection(db, 'progress'), snapshot => {
@@ -197,7 +198,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const list = snapshot.docs.map(d => d.data() as ProgressRecord);
         setProgress(list);
       }
-    }, err => handleFirestoreError(err, OperationType.LIST, 'progress'));
+    }, err => console.warn('Progress snapshot listener:', err));
 
     // Listen to Doubts
     const unsubDoubts = onSnapshot(collection(db, 'doubts'), snapshot => {
@@ -205,7 +206,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const list = snapshot.docs.map(d => d.data() as DoubtQuestion);
         setDoubts(list);
       }
-    }, err => handleFirestoreError(err, OperationType.LIST, 'doubts'));
+    }, err => console.warn('Doubts snapshot listener:', err));
 
     return () => {
       unsubProfiles();
@@ -288,6 +289,36 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     addToast(`Account created in Cloud for ${fullName}`, 'success');
     return newProfile;
+  };
+
+  const loginWithEmail = async (loginEmail: string): Promise<UserProfile | null> => {
+    const cleanEmail = loginEmail.toLowerCase().trim();
+    // 1. Check local state profiles first
+    let match = profiles.find(p => p.email.toLowerCase() === cleanEmail);
+    if (match) {
+      setCurrentUser(match);
+      addToast(`Welcome back, ${match.full_name}!`, 'success');
+      return match;
+    }
+
+    // 2. Fetch directly from Cloud Firestore in case account was created on another device
+    try {
+      const snap = await getDocs(collection(db, 'profiles'));
+      if (!snap.empty) {
+        const cloudProfiles = snap.docs.map(d => d.data() as UserProfile);
+        setProfiles(cloudProfiles);
+        match = cloudProfiles.find(p => p.email.toLowerCase() === cleanEmail);
+        if (match) {
+          setCurrentUser(match);
+          addToast(`Welcome back, ${match.full_name}!`, 'success');
+          return match;
+        }
+      }
+    } catch (err: any) {
+      console.error('Error fetching cloud profiles:', err);
+    }
+
+    return null;
   };
 
   const createBatch = async (data: Omit<BatchSlot, 'id' | 'created_at' | 'join_code'>): Promise<BatchSlot> => {
@@ -742,6 +773,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         linkChild,
         addToast,
         removeToast,
+        loginWithEmail,
         resetToDemoData,
       }}
     >
