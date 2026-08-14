@@ -12,11 +12,17 @@ export const db = getFirestore(app);
 // Initialize Auth
 export const auth = getAuth(app);
 
-// Google Auth Provider with Google Meet scopes
+// Google Auth Provider (Standard Sign-In)
 export const googleProvider = new GoogleAuthProvider();
-googleProvider.addScope('https://www.googleapis.com/auth/meetings.space.created');
-googleProvider.addScope('https://www.googleapis.com/auth/meetings.space.readonly');
-googleProvider.addScope('https://www.googleapis.com/auth/meetings.space.settings');
+
+// Google Auth Provider for Google Meet (requested only when creating live class links)
+export const getMeetGoogleProvider = () => {
+  const provider = new GoogleAuthProvider();
+  provider.addScope('https://www.googleapis.com/auth/meetings.space.created');
+  provider.addScope('https://www.googleapis.com/auth/meetings.space.readonly');
+  provider.addScope('https://www.googleapis.com/auth/meetings.space.settings');
+  return provider;
+};
 
 // Firestore Error Handling
 export enum OperationType {

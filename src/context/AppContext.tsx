@@ -81,7 +81,7 @@ const LOCAL_STORAGE_KEY = 'eduportal_tuition_app_state_v2';
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [profiles, setProfiles] = useState<UserProfile[]>(INITIAL_PROFILES);
-  const [currentUser, setCurrentUser] = useState<UserProfile | null>(INITIAL_PROFILES[0]);
+  const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
   const [batches, setBatches] = useState<BatchSlot[]>(INITIAL_BATCHES);
   const [enrollments, setEnrollments] = useState<Enrollment[]>(INITIAL_ENROLLMENTS);
   const [attendance, setAttendance] = useState<AttendanceRecord[]>(INITIAL_ATTENDANCE);

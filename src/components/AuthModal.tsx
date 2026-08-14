@@ -34,9 +34,21 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         addToast(`Signed in with Google as ${userFullName}`, 'success');
         onClose();
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error('Google Sign-in failed:', err);
-      addToast('Google Sign-in cancelled or failed', 'error');
+      const code = err?.code;
+      if (code === 'auth/unauthorized-domain') {
+        addToast(
+          'Firebase Domain Error: Please add "akshat243639.github.io" under Firebase Console -> Authentication -> Settings -> Authorized Domains.',
+          'error'
+        );
+      } else if (code === 'auth/popup-closed-by-user') {
+        addToast('Google Sign-in popup was closed.', 'info');
+      } else if (code === 'auth/popup-blocked') {
+        addToast('Sign-in popup blocked by browser. Please allow popups.', 'warning');
+      } else {
+        addToast(`Google Sign-in error: ${err?.message || 'Failed to authenticate'}`, 'error');
+      }
     } finally {
       setIsGoogleLoading(false);
     }
